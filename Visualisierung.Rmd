@@ -1,0 +1,85 @@
+```{r}
+# Visualisierung der Daten
+
+# Installieren der benoetigten Pakete
+if (!require(rstudioapi)) {
+  install.packages("rstudioapi")
+  library(rstudioapi) 
+}
+
+if (!require(ggplot2)) {
+  install.packages("ggplot2")
+  library(ggplot2)
+}
+
+# Arbeitsspeicher leeren
+remove(list = ls())
+graphics.off()
+
+# Arbeitsverzeichnis auf das Projektverzeichnis setzen
+proj_pfad <- getActiveProject()
+setwd(proj_pfad)
+
+# Durchfuehren des Aufbereitungs-Skripts
+source("Aufbereitung.R")
+
+# Definieren einer Funktion zum Erstellen von einfachen Barplots: Es muessen die Daten und die Spaltennamen der Variablen,
+# die auf der X-Achse und der Y-Achse abgetragen werden sollen übergeben werden. Zusaetzlich koennen einige kosmetische
+# Aspekte angepasst werden.
+bar_plot <- function(data,
+                     x,
+                     y,
+                     xLabel = x,
+                     yLabel = y,
+                     barWidth = .6,
+                     fill = "#005b96") {
+  ggplot(data, aes(x = data[ ,x], y = data[ ,y])) +
+    stat_summary(fun.y = mean,
+                 geom = "bar",
+                 width = barWidth,
+                 fill = fill) +
+    stat_summary(fun.data = mean_cl_normal,
+                 geom = "errorbar",
+                 width = barWidth/2.5) +
+    # Beschriftung der Achsen anpassen
+    xlab(xLabel)+
+    ylab(yLabel) +
+    # Platzieren der Balken direkt auf der X-Achse (und etwas entfernt von der Y-Achse)
+    scale_y_continuous(expand = c(0, 0, 0.05, 0)) +
+    # Enfernen des Hintergrunds und Einzeichnen schwarzer Achsen
+    theme(panel.background = element_blank(),
+          axis.line = element_line(color = "black")) +
+    # Entfernen der Ticks an der X-Achse
+    theme(axis.ticks.x = element_blank())
+}
+
+```
+
+```{r}
+
+# Umsatz in Abhaengigkeit von der Warengruppe
+bar_plot(daten, "Warengruppe", "Umsatz")
+
+```
+
+
+```{r}
+
+# Umsatz in Abhaengigkeit vom Wochentag
+bar_plot(daten, "Wochentag", "Umsatz")
+
+```
+
+```{r}
+
+# Umsatz in Abhaengigkeit von der Kieler Woche
+bar_plot(daten, "KielerWoche", "Umsatz", xLabel = "Kieler Woche")
+
+```
+
+```{r}
+
+# Umsatz in Abhaengigkeit von der Zeit im Monat
+bar_plot(daten, "Zeit_Im_Monat", "Umsatz", xLabel = "Zeit im Monat")
+
+```
