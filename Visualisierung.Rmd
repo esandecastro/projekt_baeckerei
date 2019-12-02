@@ -24,14 +24,15 @@ setwd(proj_pfad)
 source("Aufbereitung.R")
 
 # Definieren einer Funktion zum Erstellen von einfachen Barplots: Es muessen die Daten und die Spaltennamen der Variablen,
-# die auf der X-Achse und der Y-Achse abgetragen werden sollen übergeben werden. Zusaetzlich koennen einige kosmetische
-# Aspekte angepasst werden.
+# die auf der X-Achse und der Y-Achse abgetragen werden sollen uebergeben werden (alternativ koennen auch die Indizes der
+# Spalten uebergeben werden, dann sollten allerdings die Achsenbeschriftungen zusaetzlich angepasst werden). Zusaetzlich
+# koennen einige kosmetische Aspekte angepasst werden.
 bar_plot <- function(data,
                      x,
                      y,
                      xLabel = x,
                      yLabel = y,
-                     barWidth = .6,
+                     barWidth = .7,
                      fill = "#005b96") {
   ggplot(data, aes(x = data[ ,x], y = data[ ,y])) +
     stat_summary(fun.y = mean,
@@ -47,8 +48,7 @@ bar_plot <- function(data,
     # Platzieren der Balken direkt auf der X-Achse (und etwas entfernt von der Y-Achse)
     scale_y_continuous(expand = c(0, 0, 0.05, 0)) +
     # Enfernen des Hintergrunds und Einzeichnen schwarzer Achsen
-    theme(panel.background = element_blank(),
-          axis.line = element_line(color = "black")) +
+    theme_classic() +
     # Entfernen der Ticks an der X-Achse
     theme(axis.ticks.x = element_blank())
 }
