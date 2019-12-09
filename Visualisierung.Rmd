@@ -1,7 +1,7 @@
 ```{r}
 # Visualisierung der Daten
 
-# Installieren der benoetigten Pakete
+# Installieren der benötigten Pakete
 if (!require(rstudioapi)) {
   install.packages("rstudioapi")
   library(rstudioapi) 
@@ -25,23 +25,24 @@ graphics.off()
 proj_pfad <- getActiveProject()
 setwd(proj_pfad)
 
-# Durchfuehren des Aufbereitungs-Skripts
-source("Aufbereitung.R")
+# Durchführen des Aufbereitungs-Skripts ("source" führt zum fehlerhaften Durchführen mit Umlauten, daher die explizite Angabe der Unicode-Kodierung)
+eval(parse("Aufbereitung.R", encoding = "UTF-8"))
 
-# Definieren einer Funktion zum Erstellen von einfachen Barplots: Es muessen die Daten und die Spaltennamen der Variablen,
-# die auf der X-Achse und der Y-Achse abgetragen werden sollen uebergeben werden (alternativ koennen auch die Indizes der
-# Spalten uebergeben werden, dann sollten allerdings die Achsenbeschriftungen zusaetzlich angepasst werden). Zusaetzlich
-# koennen einige kosmetische Aspekte angepasst werden.
-bar_plot <- function(data,
+# Definieren einer Funktion zum Erstellen von einfachen Barplots: Es müssen die Daten und die Spaltennamen der Variablen,
+# die auf der X-Achse und der Y-Achse abgetragen werden sollen übergeben werden (alternativ können auch die Indizes der
+# Spalten übergeben werden, dann sollten allerdings die Achsenbeschriftungen zusätzlich angepasst werden). Zusätzlich
+# können einige kosmetische Aspekte angepasst werden.
+custom_plot <- function(data,
                      x,
                      y,
+                     geom = "bar",
                      xLabel = x,
                      yLabel = y,
                      barWidth = .7,
                      fill = "#005b96") {
   ggplot(data, aes(x = data[ ,x], y = data[ ,y])) +
     stat_summary(fun.y = mean,
-                 geom = "bar",
+                 geom = geom,
                  width = barWidth,
                  fill = fill) +
     stat_summary(fun.data = mean_cl_normal,
@@ -62,29 +63,68 @@ bar_plot <- function(data,
 
 ```{r}
 
-# Umsatz in Abhaengigkeit von der Warengruppe
-bar_plot(daten, "Warengruppe", "Umsatz")
+# Umsatz in Abhängigkeit von der Warengruppe
+custom_plot(daten, "Warengruppe", "Umsatz")
 
 ```
 
 
 ```{r}
 
-# Umsatz in Abhaengigkeit vom Wochentag
-bar_plot(daten, "Wochentag", "Umsatz")
+# Umsatz in Abhängigkeit von der Temperatur
+with(daten, plot(Temperatur, Umsatz))
+
+```
+
+
+
+```{r}
+
+# Umsatz in Abhängigkeit von der Bewölkung
+custom_plot(daten, "Bewoelkung", "Umsatz", xLabel = "Bewölkung", geom = "line")
+
+```
+
+
+
+```{r}
+
+# Umsatz in Abhängigkeit von der WIndgeschwindigkeit
+custom_plot(daten, "Windgeschwindigkeit", "Umsatz", geom = "line")
 
 ```
 
 ```{r}
 
-# Umsatz in Abhaengigkeit von der Kieler Woche
-bar_plot(daten, "KielerWoche", "Umsatz", xLabel = "Kieler Woche")
+# Umsatz in Abhängigkeit von der WIndgeschwindigkeit
+custom_plot(daten, "Wettercode", "Umsatz")
 
 ```
 
 ```{r}
 
-# Umsatz in Abhaengigkeit von der Zeit im Monat
-bar_plot(daten, "Zeit_Im_Monat", "Umsatz", xLabel = "Zeit im Monat")
+# Umsatz in Abhängigkeit vom Wochentag
+custom_plot(daten, "Wochentag", "Umsatz")
+
+```
+
+```{r}
+
+# Umsatz in Abhängigkeit von der Kieler Woche
+custom_plot(daten, "KielerWoche", "Umsatz", xLabel = "Kieler Woche")
+
+```
+
+```{r}
+
+# Umsatz in Abhängigkeit von der Zeit im Monat
+custom_plot(daten, "Zeit_Im_Monat", "Umsatz", xLabel = "Zeit im Monat")
+
+```
+
+```{r}
+
+# Umsatz in Abhängigkeit von der Zeit im Monat
+custom_plot(daten, "Jahrzeiten", "Umsatz", xLabel = "Jahreszeiten")
 
 ```
