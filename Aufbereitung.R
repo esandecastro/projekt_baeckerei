@@ -22,7 +22,7 @@ daten_pfad <- file.path(proj_pfad, "data")
 
 # Angabe aller Namen von Dateien, die verknuepft werden sollen (muessen alle eine Spalte namens "Datum" haben und das Komma als
 # Trennzeichen haben)
-dateinamen <- c("umsatzdaten_gekuerzt.csv", "kiwo.csv", "wetter.csv", "monatsdaten.csv")
+dateinamen <- c("umsatzdaten_gekuerzt.csv", "kiwo.csv", "wetter.csv", "monatsdaten.csv", "jahresdaten.csv")
 
 
 # Zusammenfuehrung der Daten
@@ -63,3 +63,4 @@ daten$Wochentag <- ordered(weekdays(daten$Datum), levels = c("Montag", "Dienstag
 
 # Ordnen des Faktors zur Zeit im Monat
 daten$Zeit_Im_Monat <- ordered(daten$Zeit_Im_Monat, levels = c("Monatsanfang", "Monatsmitte", "Monatsende"))
+

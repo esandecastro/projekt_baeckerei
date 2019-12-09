@@ -5,28 +5,43 @@ library(ggplot2)
 library(dplyr)
 library(openair)
 
-# Jahreszeiten definieren
+# Package installieren/laden, das es erlaubt, den Pfad des aktiven Dokuments zu extrahieren
+if (!require(rstudioapi)) {
+  install.packages("rstudioapi")
+  library(rstudioapi) 
+}
+
 # Daten von datei importieren
 # Einlesen der Umsatzdaten 
 umsatzdaten <- read_csv("data/umsatzdaten_gekuerzt.csv")
-wetterdaten <- read_csv("data/wetter.csv")
+
 #datum <- as.Date(umsatzdaten$Datum, format = "%d.%m.%Y")
-
+#Spalten für arbeiten mit daten
 umsatzdaten[order(umsatzdaten$Datum ),]
-umsatzdaten$Monat <-format(umsatzdaten$Datum, "%m")
-umsatzdaten$Jahr <-format(umsatzdaten$Datum, "%Y")
-umsatzdaten$Tag <- format(umsatzdaten$Datum, "%d")
 
-# Neue variable Jahrzeiten definieren => fangt alle jahrzeiten am 01 tag des monats an
-# spalte Date definieren für cutdata funktion nötig
-#umsatzdaten$date <- as.Date(umsatzdaten$Datum, "%Y/%m/%d")
-#jahrzeiten <- cutData(umsatzdaten,'seasonyear','northern', 4, 1)
+#Funktion aufrufen
+season <- toSeason(umsatzdaten)
+
+#Visualization die daten
+#View(season)
+
+#Speichern daten in csv datei
+proj_pfad <- getActiveProject()
+# Pfad zu den Daten erstellen
+daten_pfad <- file.path(proj_pfad, "data")
+write.csv(season, file.path(daten_pfad, "jahresdaten.csv"), row.names = FALSE)
+
 
 # Funktion dass anzeigt die Jahreszeiten jeder Zeile
 toSeason <- function(data) {
-  datum <- data$Datum
-  data$Jahrzeiten <- ""
-  #stopifnot(class(datum) == "Date")
+  # Spalten definieren für arbeiten mit datum
+  data$Monat <-format(data$Datum, "%m")
+  data$Jahr <-format(data$Datum, "%Y")
+  data$Tag <- format(data$Datum, "%d")
+  
+  # vektor definieren
+  jahrzeitenV <- ""
+  
   for (zeile in seq(1:nrow(data))){
     m <- data$Monat[zeile]
     d <- data$Tag[zeile]
@@ -41,14 +56,12 @@ toSeason <- function(data) {
       r <- "Winter"
     }
     
-    data$Jahrzeiten[zeile] <- r
+    jahrzeitenV[zeile] <- r
   }
-  return(data)
+  
+  #Vektoren zusammenführen
+  neuData <- data.frame(Datum = data$Datum, Jahrzeiten = jahrzeitenV)
+  
+  return(neuData)
 }
 
-#In session Variable speichern
-season <- toSeason(umsatzdaten)
-#In session Variable speichern
-#season <- toSeason(wetterdaten)
-#Visualization die daten
-View(season)
