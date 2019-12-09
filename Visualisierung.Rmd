@@ -12,6 +12,11 @@ if (!require(ggplot2)) {
   library(ggplot2)
 }
 
+if (!require(Hmisc)) {
+  install.packages("Hmisc")
+  library(Hmisc)
+}
+
 # Arbeitsspeicher leeren
 remove(list = ls())
 graphics.off()
