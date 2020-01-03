@@ -22,7 +22,7 @@ daten_pfad <- file.path(proj_pfad, "data")
 
 # Angabe aller Namen von Dateien, die verknüpft werden sollen (müssen alle eine Spalte namens "Datum" haben und das Komma als
 # Trennzeichen haben)
-dateinamen <- c("umsatzdaten_gekuerzt.csv", "kiwo.csv", "wetter.csv", "monatsdaten.csv", "jahresdaten.csv")
+dateinamen <- c("umsatzdaten_gekuerzt.csv", "kiwo.csv", "wetter.csv", "monatsdaten.csv", "jahresdaten.csv", "ferien.csv")
 
 
 # Zusammenführung der Daten
