@@ -22,7 +22,8 @@ daten_pfad <- file.path(proj_pfad, "data")
 
 # Angabe aller Namen von Dateien, die verknüpft werden sollen (müssen alle eine Spalte namens "Datum" haben und das Komma als
 # Trennzeichen haben)
-dateinamen <- c("umsatzdaten_gekuerzt.csv", "kiwo.csv", "wetter.csv", "monatsdaten.csv", "jahresdaten.csv", "ferien.csv")
+dateinamen <- c("umsatzdaten_gekuerzt.csv", "kiwo.csv", "wetter.csv", "monatsdaten.csv", "jahresdaten.csv", "ferien.csv",
+                "feiertage.csv", "vorherige_umsatzdaten.csv", "zeit_vor_und_nach_feiertagen.csv")
 
 
 # Zusammenführung der Daten
@@ -45,6 +46,8 @@ for (j in 2:length(dateinamen)) {
   daten <- left_join(daten, tmp_daten, by = "Datum")
 }
 
+# Entfernung von eventuell entstandenen gedoppelten Reihen
+daten <- daten[!duplicated(daten), ]
 
 # Aufbereitung der Daten
 

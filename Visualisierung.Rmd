@@ -125,6 +125,61 @@ custom_plot(daten, "Zeit_Im_Monat", "Umsatz", xLabel = "Zeit im Monat")
 ```{r}
 
 # Umsatz in Abhängigkeit von der Zeit im Monat
-custom_plot(daten, "Jahrzeiten", "Umsatz", xLabel = "Jahreszeiten")
+custom_plot(daten, "Jahrzeiten", "Umsatz", xLabel = "Jahreszeit")
+
+```
+
+
+```{r}
+
+# Umsatz in Abhängigkeit von der Zeit im Monat
+custom_plot(daten, "Feiertag", "Umsatz")
+
+```
+
+```{r}
+
+# Umsatz in Abhängigkeit von der Zeit im Monat
+custom_plot(daten, "Feiertag_in_weniger_als_1_Tagen", "Umsatz")
+
+```
+
+
+```{r}
+
+# Umsatz in Abhängigkeit von der Zeit im Monat
+custom_plot(daten, "Feiertag_in_weniger_als_2_Tagen", "Umsatz")
+
+```
+
+
+```{r}
+
+# Umsatz in Abhängigkeit von der Zeit im Monat
+custom_plot(daten, "Feiertag_in_weniger_als_3_Tagen", "Umsatz")
+
+```
+
+
+```{r}
+
+# Umsatz in Abhängigkeit von der Zeit im Monat
+custom_plot(daten, "Feiertag_vor_weniger_als_1_Tagen", "Umsatz")
+
+```
+
+
+```{r}
+
+# Umsatz in Abhängigkeit von der Zeit im Monat
+custom_plot(daten, "Feiertag_vor_weniger_als_2_Tagen", "Umsatz")
+
+```
+
+
+```{r}
+
+# Umsatz in Abhängigkeit von der Zeit im Monat
+custom_plot(daten, "Feiertag_vor_weniger_als_3_Tagen", "Umsatz")
 
 ```
