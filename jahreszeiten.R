@@ -19,25 +19,12 @@ umsatzdaten <- read_csv("data/umsatzdaten_gekuerzt.csv")
 #Spalten für arbeiten mit daten
 umsatzdaten[order(umsatzdaten$Datum ),]
 
-#Funktion aufrufen
-season <- toSeason(umsatzdaten)
-
-#Visualization die daten
-#View(season)
-
-#Speichern daten in csv datei
-proj_pfad <- getActiveProject()
-# Pfad zu den Daten erstellen
-daten_pfad <- file.path(proj_pfad, "data")
-write.csv(season, file.path(daten_pfad, "jahresdaten.csv"), row.names = FALSE)
-
-
 # Funktion dass anzeigt die Jahreszeiten jeder Zeile
 toSeason <- function(data) {
   # Spalten definieren für arbeiten mit datum
   data$Monat <-format(data$Datum, "%m")
-  data$Jahr <-format(data$Datum, "%Y")
-  data$Tag <- format(data$Datum, "%d")
+  data$Jahr  <-format(data$Datum, "%Y")
+  data$Tag   <- format(data$Datum, "%d")
   
   # vektor definieren
   jahrzeitenV <- ""
@@ -45,7 +32,7 @@ toSeason <- function(data) {
   for (zeile in seq(1:nrow(data))){
     m <- data$Monat[zeile]
     d <- data$Tag[zeile]
-
+    
     if ((m == "03" & d >= "21") | (m == "04") | (m == "05") | (m == "06" & d < "21")) {
       r <- "Frühling"
     } else if ((m == "06" & d >= "21") | (m == "07") | (m == "08") | (m == "09" & d < "21")) {
@@ -64,4 +51,18 @@ toSeason <- function(data) {
   
   return(neuData)
 }
+
+#Funktion aufrufen
+season <- toSeason(umsatzdaten)
+
+#Visualization die daten
+#View(season)
+
+#Speichern daten in csv datei
+proj_pfad <- getActiveProject()
+# Pfad zu den Daten erstellen
+daten_pfad <- file.path(proj_pfad, "data")
+write.csv(season, file.path(daten_pfad, "jahresdaten.csv"), row.names = FALSE)
+
+
 
