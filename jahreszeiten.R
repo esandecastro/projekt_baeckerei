@@ -11,6 +11,10 @@ if (!require(rstudioapi)) {
   library(rstudioapi) 
 }
 
+# Arbeitsspeicher leeren
+remove(list = ls())
+graphics.off()
+
 # Daten von datei importieren
 # Einlesen der Umsatzdaten 
 umsatzdaten <- read_csv("data/umsatzdaten_gekuerzt.csv")
