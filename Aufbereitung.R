@@ -69,3 +69,8 @@ daten$Zeit_Im_Monat <- ordered(daten$Zeit_Im_Monat, levels = c("Monatsanfang", "
 
 # Ordnen des Faktors zu den Jahreszeiten
 daten$Jahrzeiten <- ordered(daten$Jahrzeiten, levels = c("Frühling", "Sommer", "Herbst", "Winter"))
+
+#Speichern daten in csv datei
+write.csv(daten, file.path(daten_pfad, "aufbereitung.csv"), row.names = FALSE, fileEncoding = "utf-8")
+
+
