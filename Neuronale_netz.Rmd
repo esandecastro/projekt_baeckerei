@@ -10,8 +10,7 @@ output: html_notebook
 #install.packages("reticulate")
 #install.packages("Metrics")
 #library(reticulate)
-#py_install("pandas")	
-#py_install("numpy")	
+#py_install("numpy")
 #py_install("tensorflow")
 ```
 
@@ -26,6 +25,18 @@ library(readr)
 library(fastDummies)
 library(ggplot2)
 library(Metrics)
+# Installieren der benötigten Pakete
+if (!require(rstudioapi)) {
+  install.packages("rstudioapi")
+  library(rstudioapi) 
+}
+if (!require(broom)) {
+  install.packages("broom")
+  library(broom)
+}
+# Arbeitsspeicher leeren
+remove(list = ls())
+graphics.off()
 # Funktionsdefinitionen
 #' Title Fast creation of normalized variables
 #' Quickly create normalized columns from numeric type columns in the inputted data. This function is useful for statistical analysis when you want normalized columns rather than the actual columns.
@@ -72,36 +83,45 @@ get.norm_values <- function (.data, select_columns = NULL) {
 ### Aufbereitung der Daten ###
 ```{r}
 # Einlesen der Daten
-house_pricing <- read_csv("https://raw.githubusercontent.com/opencampus-sh/ws1920-datascience/master/house_pricing_test.csv")
+#house_pricing <- read_csv("https://raw.githubusercontent.com/opencampus-sh/ws1920-datascience/master/house_pricing_test.csv")
+# Arbeitsverzeichnis auf das Projektverzeichnis setzen
+proj_pfad <- getActiveProject()
+setwd(proj_pfad)
+
+# Durchführen des Aufbereitungs-Skripts ("source" führt zum fehlerhaften Durchführen mit Umlauten, daher die explizite Angabe der Unicode-Kodierung)
+eval(parse("Aufbereitung.R", encoding = "UTF-8"))
+
 ```
 
 ```{r}
 # Rekodierung von kategoriellen Variablen (zu Dummy-Variablen)
-dummy_list <- c("view", "waterfront")
-house_pricing_dummy = dummy_cols(house_pricing, dummy_list)
+#dummy_list <- c("view", "waterfront")
+dummy_list <- c("Ferien", "FerienCAU")
+#house_pricing_dummy = dummy_cols(house_pricing, dummy_list)
+daten_dummy = dummy_cols(daten, dummy_list)
 # Standardisierung von metrischen Variablen
-norm_list <- c("price", "sqft_lot", "bathrooms", "grade", "condition")
+norm_list <- c("Umsatz", "Warengruppe", "Bewoelkung", "Temperatur", "Windgeschwindigkeit", "Wettercode", "Umsatz_letze_1__Tage", "Umsatz_letze_2__Tage", "Umsatz_letze_3__Tage", "Umsatz_letze_7__Tage", "Umsatz_letze_30__Tage", "Wochentag")
 # Berechnung der Mittelwerte und Standardabweichungen der zu standardisierenden Variablen
-norm_values_list <- get.norm_values(house_pricing_dummy, norm_list)
+norm_values_list <- get.norm_values(daten_dummy, norm_list)
 # Standardisierung der angegebenen metrischen Variablen
-house_pricing_norm <- norm_cols(house_pricing_dummy, norm_values_list)
+daten_norm <- norm_cols(daten_dummy, norm_values_list)
 # Definition von Variablenlisten, um das Arbeiten mit diesen zu erleichtern
-waterfront_dummies = c('waterfront_0', 'waterfront_1')
-view_dummies = c('view_0', 'view_1', 'view_2', 'view_3','view_4')
+ferien_dummies = c('Ferien_0', 'Ferien_1')
+ferienCAU_dummies = c('FerienCAU_0', 'FerienCAU_1')
 # Definition der Features (der unabhängigen Variablen auf deren Basis die Vorhersagen erzeugt werden sollen)
-features = c('sqft_lot_norm', 'condition_norm', 'grade_norm', 'bathrooms_norm', view_dummies, waterfront_dummies)
+features = c('Warengruppe_norm', 'Bewoelkung_norm', 'Temperatur_norm', 'Windgeschwindigkeit_norm', 'Wettercode_norm', 'Umsatz_letze_1__Tage_norm', 'Umsatz_letze_2__Tage_norm', 'Umsatz_letze_3__Tage_norm', 'Umsatz_letze_7__Tage_norm', 'Umsatz_letze_30__Tage_norm', 'Wochentag_norm', ferien_dummies, ferienCAU_dummies)
 # Definition der Label-Variable (der abhaengigen Variable, die vorhergesagt werden soll) sowie
-label = 'price_norm'
+label = 'Umsatz_norm'
 # Zufallszähler setzen, um die zufällige Partitionierung bei jedem Durchlauf gleich zu halten
 set.seed(1)
 # Bestimmung der Indizes des Traininsdatensatzes
-train_ind <- sample(seq_len(nrow(house_pricing_norm)), size = floor(0.80 * nrow(house_pricing_norm)))
+train_ind <- sample(seq_len(nrow(Umsatz_norm)), size = floor(0.80 * nrow(Umsatz_norm)))
 # Teilen in Trainings- und Testdatensatz
-train_dataset = house_pricing_norm[train_ind, features]
-test_dataset = house_pricing_norm[-train_ind, features]
+train_dataset = Umsatz_norm[train_ind, features]
+test_dataset = Umsatz_norm[-train_ind, features]
 # Selektion der Variable, die als Label definiert wurde
-train_labels = house_pricing_norm[train_ind, label]
-test_labels = house_pricing_norm[-train_ind, label]
+train_labels = Umsatz_norm[train_ind, label]
+test_labels = Umsatz_norm[-train_ind, label]
 ```
 
 
@@ -153,7 +173,7 @@ ggplot(data[-1,]) +
 
 ### Laden eines gespeicherten Neuronalen Netzes ###
 ```{python}
-model = keras.models.load_model("python_model.h5")
+model = keras.models.load_model("python_model_best.h5")
 ```
 
 
