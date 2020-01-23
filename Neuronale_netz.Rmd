@@ -68,8 +68,8 @@ norm_cols <- function (.data, norm_values = NULL) {
 get.norm_values <- function (.data, select_columns = NULL) {
   result <- NULL
   for (col_name in select_columns) {
-    mean <- mean(.data[[col_name]])
-    sd <- sd(.data[[col_name]])
+    mean <- mean(.data[[col_name]], na.rm=TRUE)
+    sd <- sd(.data[[col_name]], na.rm=TRUE)
     result <- rbind (result, c(mean, sd))
   }
   result <- as.data.frame(result, stringsAsFactors = FALSE)
@@ -100,7 +100,10 @@ dummy_list <- c("Ferien", "FerienCAU")
 #house_pricing_dummy = dummy_cols(house_pricing, dummy_list)
 daten_dummy = dummy_cols(daten, dummy_list)
 # Standardisierung von metrischen Variablen
-norm_list <- c("Umsatz", "Warengruppe", "Bewoelkung", "Temperatur", "Windgeschwindigkeit", "Wettercode", "Umsatz_letze_1__Tage", "Umsatz_letze_2__Tage", "Umsatz_letze_3__Tage", "Umsatz_letze_7__Tage", "Umsatz_letze_30__Tage", "Wochentag")
+norm_list <- c("Umsatz", "Temperatur", "Windgeschwindigkeit")
+#, "Umsatz_letze_1__Tage", "Umsatz_letze_3__Tage", "Umsatz_letze_7__Tage", "Umsatz_letze_30__Tage"
+
+#Bewoelkung", "Temperatur", "Windgeschwindigkeit", "Umsatz_letze_1__Tage", "Umsatz_letze_2__Tage", "Umsatz_letze_3__Tage", "Umsatz_letze_7__Tage", "Umsatz_letze_30__Tage"
 # Berechnung der Mittelwerte und Standardabweichungen der zu standardisierenden Variablen
 norm_values_list <- get.norm_values(daten_dummy, norm_list)
 # Standardisierung der angegebenen metrischen Variablen
@@ -109,19 +112,20 @@ daten_norm <- norm_cols(daten_dummy, norm_values_list)
 ferien_dummies = c('Ferien_0', 'Ferien_1')
 ferienCAU_dummies = c('FerienCAU_0', 'FerienCAU_1')
 # Definition der Features (der unabhängigen Variablen auf deren Basis die Vorhersagen erzeugt werden sollen)
-features = c('Warengruppe_norm', 'Bewoelkung_norm', 'Temperatur_norm', 'Windgeschwindigkeit_norm', 'Wettercode_norm', 'Umsatz_letze_1__Tage_norm', 'Umsatz_letze_2__Tage_norm', 'Umsatz_letze_3__Tage_norm', 'Umsatz_letze_7__Tage_norm', 'Umsatz_letze_30__Tage_norm', 'Wochentag_norm', ferien_dummies, ferienCAU_dummies)
+#"Umsatz_letze_1__Tage_norm", "Umsatz_letze_3__Tage_norm", "Umsatz_letze_7__Tage_norm", "Umsatz_letze_30__Tage_norm"
+features = c('Temperatur_norm', "Windgeschwindigkeit_norm", ferien_dummies, ferienCAU_dummies)
 # Definition der Label-Variable (der abhaengigen Variable, die vorhergesagt werden soll) sowie
 label = 'Umsatz_norm'
 # Zufallszähler setzen, um die zufällige Partitionierung bei jedem Durchlauf gleich zu halten
 set.seed(1)
 # Bestimmung der Indizes des Traininsdatensatzes
-train_ind <- sample(seq_len(nrow(Umsatz_norm)), size = floor(0.80 * nrow(Umsatz_norm)))
+train_ind <- sample(seq_len(nrow(daten_norm)), size = floor(0.80 * nrow(daten_norm)))
 # Teilen in Trainings- und Testdatensatz
-train_dataset = Umsatz_norm[train_ind, features]
-test_dataset = Umsatz_norm[-train_ind, features]
+train_dataset = daten_norm[train_ind, features]
+test_dataset = daten_norm[-train_ind, features]
 # Selektion der Variable, die als Label definiert wurde
-train_labels = Umsatz_norm[train_ind, label]
-test_labels = Umsatz_norm[-train_ind, label]
+train_labels = daten_norm[train_ind, label]
+test_labels = daten_norm[-train_ind, label]
 ```
 
 
@@ -150,7 +154,7 @@ history = model.fit(r.train_dataset, r.train_labels, epochs=150, validation_spli
 
 ### Speichern des Neuronalen Netzes für spätere Vorhersagen ###
 ```{python}
-model.save("python_model.h5")
+model.save("neuronal_model.h5")
 ```
 
 
@@ -173,7 +177,7 @@ ggplot(data[-1,]) +
 
 ### Laden eines gespeicherten Neuronalen Netzes ###
 ```{python}
-model = keras.models.load_model("python_model_best.h5")
+model = keras.models.load_model("neuronal_model.h5")
 ```
 
 
@@ -186,8 +190,8 @@ test_predictions_norm <- py$model$predict(test_dataset)
 train_predictions <- (train_predictions_norm * norm_values_list$sd[1] ) + norm_values_list$mean[1]
 test_predictions <- (test_predictions_norm * norm_values_list$sd[1]) + norm_values_list$mean[1]
 # Selektion der zugehörigen tatsächlichen Preise
-train_actuals <- house_pricing$price[train_ind]
-test_actuals <- house_pricing$price[-train_ind]
+train_actuals <- daten$Umsatz[train_ind]
+test_actuals <- daten$Umsatz[-train_ind]
 # Vergleich der Gütekriterien für die Traingings- und Testdaten
 cat(paste0("MAPE on the Training Data:\t", format(mape(train_actuals, train_predictions)*100, digits=3, nsmall=2)))
 cat(paste0("\nMAPE on the Test Data:\t\t", format(mape(test_actuals, test_predictions)*100, digits=3, nsmall=2)))

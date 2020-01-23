@@ -10,8 +10,8 @@ if (!require(dplyr)) {
 }
 
 # Arbeitsspeicher leeren
-remove(list = ls())
-graphics.off()
+#remove(list = ls())
+#graphics.off()
 
 # Arbeitsverzeichnis auf das Projektverzeichnis setzen
 proj_pfad <- getActiveProject()
