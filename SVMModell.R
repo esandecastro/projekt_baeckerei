@@ -63,16 +63,24 @@ daten_train <- sample_frac(daten, .10)
 # the resulting object includes the optimal model in the element named 'best.model'
 #svm_tune <- tune(svm, price ~ bedrooms + bathrooms + sqft_living + zipcode, data=house_pricing_train, ranges = list(epsilon = seq(0.2,1,0.1), cost = 2^(2:3)))
 
-svm_tune <- tune (svm, Umsatz ~ Warengruppe + as.factor(Bewoelkung) + Temperatur + Windgeschwindigkeit +
-                    as.factor(Wettercode) + KielerWoche + Zeit_Im_Monat + Jahrzeiten +
-                    as.factor(Ferien) + as.factor(FerienCAU) +
-                    Umsatz_letzte_1_Tage + Umsatz_letzte_3_Tage +
+#Erstellen neue Variable ohne NA werte
+daten_test <- daten_train[, !seq(1, length(colnames(daten_train))) %in% c(5,6,7,8,10,14)]
+
+svm_tune <- tune (svm, Umsatz ~ Warengruppe + KielerWoche + Zeit_Im_Monat +
+                    as.factor(Ferien) + as.factor(FerienCAU) + Umsatz_letzte_3_Tage +
                     Umsatz_letzte_7_Tage + Umsatz_letzte_30_Tage + Feiertag_in_weniger_als_1_Tagen +
                     Feiertag_in_weniger_als_2_Tagen + Feiertag_in_weniger_als_3_Tagen + Feiertag_vor_weniger_als_1_Tagen +
                     Feiertag_vor_weniger_als_2_Tagen + Feiertag_vor_weniger_als_3_Tagen + Wochentag,
-                  data = daten_train, ranges = list(epsilon = seq(0.2,1,0.1), cost = 2^(2:3)))
+                  data = daten_test, ranges = list(epsilon = seq(0.2,1,0.1), cost = 2^(2:3)))
 
-
+#svm_tune <- tune (svm, Umsatz ~ Warengruppe + as.factor(Bewoelkung) + Temperatur + Windgeschwindigkeit +
+                   # as.factor(Wettercode) + KielerWoche + Zeit_Im_Monat + Jahrzeiten +
+                    #as.factor(Ferien) + as.factor(FerienCAU) +
+                    #Umsatz_letzte_1_Tage + Umsatz_letzte_3_Tage +
+                    #Umsatz_letzte_7_Tage + Umsatz_letzte_30_Tage + Feiertag_in_weniger_als_1_Tagen +
+                    #Feiertag_in_weniger_als_2_Tagen + Feiertag_in_weniger_als_3_Tagen + Feiertag_vor_weniger_als_1_Tagen +
+                    #Feiertag_vor_weniger_als_2_Tagen + Feiertag_vor_weniger_als_3_Tagen + Wochentag,
+                  #data = daten_train, ranges = list(epsilon = seq(0.2,1,0.1), cost = 2^(2:3)))
 
 #################
 # Checking the prediction Quality
