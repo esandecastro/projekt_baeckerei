@@ -66,7 +66,7 @@ season <- toSeason(umsatzdaten)
 proj_pfad <- getActiveProject()
 # Pfad zu den Daten erstellen
 daten_pfad <- file.path(proj_pfad, "data")
-write.csv(season, file.path(daten_pfad, "jahresdaten.csv"), row.names = FALSE)
+write.csv(season, file.path(daten_pfad, "jahresdaten.csv"), row.names = FALSE, fileEncoding = "utf-8")
 
 
 

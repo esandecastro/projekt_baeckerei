@@ -29,7 +29,7 @@ dateinamen <- c("umsatzdaten_gekuerzt.csv", "kiwo.csv", "wetter.csv", "monatsdat
 # Zusammenführung der Daten
 
 # Abspeichern des ersten Datensatzes, zu dem die weiteren in der folgenden Schleife hinzugefügt werden
-daten <- read.csv(file.path(daten_pfad, dateinamen[1]))
+daten <- read_csv(file.path(daten_pfad, dateinamen[1]))
 
 # Formatieren der Spalte "Datum" als Datentyp "Date"
 daten$Datum <- as.Date(daten$Datum)
@@ -37,7 +37,7 @@ daten$Datum <- as.Date(daten$Datum)
 # Hinzufügen der weiteren Datensätze
 for (j in 2:length(dateinamen)) {
   # Einlesen des aktuellen Datensatzes und Abspeichern in einem temporären Objekt
-  tmp_daten <- read.csv(file.path(daten_pfad, dateinamen[j]))
+  tmp_daten <- read_csv(file.path(daten_pfad, dateinamen[j]))
   
   # Formatieren der Spalte "Datum" als Datentyp "Date"
   tmp_daten$Datum <- as.Date(tmp_daten$Datum)
@@ -71,6 +71,7 @@ daten$Zeit_Im_Monat <- ordered(daten$Zeit_Im_Monat, levels = c("Monatsanfang", "
 daten$Jahrzeiten <- ordered(daten$Jahrzeiten, levels = c("Frühling", "Sommer", "Herbst", "Winter"))
 
 #Speichern daten in csv datei
-write.csv(daten, file.path(daten_pfad, "aufbereitung.csv"), row.names = FALSE, fileEncoding = "utf-8")
+#write.csv(daten, file.path(daten_pfad, "aufbereitung.csv"), row.names = FALSE, fileEncoding = "utf-8")
+write_csv(daten, file.path(daten_pfad, "aufbereitung.csv"))
 
 
