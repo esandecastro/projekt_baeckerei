@@ -64,36 +64,36 @@ daten_train <- sample_frac(daten, .10)
 #svm_tune <- tune(svm, price ~ bedrooms + bathrooms + sqft_living + zipcode, data=house_pricing_train, ranges = list(epsilon = seq(0.2,1,0.1), cost = 2^(2:3)))
 
 #Erstellen neue Variable ohne NA werte
-daten_test <- daten_train[, !seq(1, length(colnames(daten_train))) %in% c(5,6,7,8,10,14)]
+#daten_test <- daten_train[, !seq(1, length(colnames(daten_train))) %in% c(5,6,7,8,10,14)]
 
-svm_tune <- tune (svm, Umsatz ~ Warengruppe + KielerWoche + Zeit_Im_Monat +
-                    as.factor(Ferien) + as.factor(FerienCAU) + Umsatz_letzte_3_Tage +
-                    Umsatz_letzte_7_Tage + Umsatz_letzte_30_Tage + Feiertag_in_weniger_als_1_Tagen +
-                    Feiertag_in_weniger_als_2_Tagen + Feiertag_in_weniger_als_3_Tagen + Feiertag_vor_weniger_als_1_Tagen +
-                    Feiertag_vor_weniger_als_2_Tagen + Feiertag_vor_weniger_als_3_Tagen + Wochentag,
-                  data = daten_test, ranges = list(epsilon = seq(0.2,1,0.1), cost = 2^(2:3)))
+#svm_tune <- tune (svm, Umsatz ~ Warengruppe + KielerWoche + Zeit_Im_Monat  +
+#                    as.factor(Ferien) + as.factor(FerienCAU) + Umsatz_letzte_3_Tage +
+#                    Umsatz_letzte_7_Tage + Umsatz_letzte_30_Tage + Feiertag_in_weniger_als_1_Tagen +
+#                    Feiertag_in_weniger_als_2_Tagen + Feiertag_in_weniger_als_3_Tagen + Feiertag_vor_weniger_als_1_Tagen +
+#                    Feiertag_vor_weniger_als_2_Tagen + Feiertag_vor_weniger_als_3_Tagen + Wochentag,
+#                  data = daten_test, ranges = list(epsilon = seq(0.2,1,0.1), cost = 2^(2:3)))
 
-#svm_tune <- tune (svm, Umsatz ~ Warengruppe + as.factor(Bewoelkung) + Temperatur + Windgeschwindigkeit +
-                   # as.factor(Wettercode) + KielerWoche + Zeit_Im_Monat + Jahrzeiten +
-                    #as.factor(Ferien) + as.factor(FerienCAU) +
-                    #Umsatz_letzte_1_Tage + Umsatz_letzte_3_Tage +
-                    #Umsatz_letzte_7_Tage + Umsatz_letzte_30_Tage + Feiertag_in_weniger_als_1_Tagen +
-                    #Feiertag_in_weniger_als_2_Tagen + Feiertag_in_weniger_als_3_Tagen + Feiertag_vor_weniger_als_1_Tagen +
-                    #Feiertag_vor_weniger_als_2_Tagen + Feiertag_vor_weniger_als_3_Tagen + Wochentag,
-                  #data = daten_train, ranges = list(epsilon = seq(0.2,1,0.1), cost = 2^(2:3)))
+svm_tune <- tune (svm, Umsatz ~ Warengruppe + as.factor(Bewoelkung) + Temperatur + Windgeschwindigkeit +
+                   as.factor(Wettercode) + KielerWoche + Zeit_Im_Monat + Jahrzeiten +
+                   as.factor(Ferien) + as.factor(FerienCAU) +
+                   Umsatz_letzte_1_Tage + Umsatz_letzte_3_Tage +
+                   Umsatz_letzte_7_Tage + Umsatz_letzte_30_Tage + Feiertag_in_weniger_als_1_Tagen +
+                   Feiertag_in_weniger_als_2_Tagen + Feiertag_in_weniger_als_3_Tagen + Feiertag_vor_weniger_als_1_Tagen +
+                   Feiertag_vor_weniger_als_2_Tagen + Feiertag_vor_weniger_als_3_Tagen + Wochentag,
+                   data = daten_train, ranges = list(epsilon = seq(0.2,1,0.1), cost = 2^(2:3)))
 
 #################
 # Checking the prediction Quality
 
 # Calculating the prediction for the training data using the best model according to the grid search
-#pred_train <- predict(svm_tune$best.model, house_pricing_train)
+pred_train <- predict(svm_tune$best.model, daten_train)
 
 # Calculating the prediction for the test data using the best model according to the grid search
-#pred_test <- predict(svm_tune$best.model, house_pricing_test)
+pred_test <- predict(svm_tune$best.model, daten_test)
 
 # Calculating the prediction quality for the training data using the MAPE
-#mape(house_pricing_train$price, pred_train)
+mape(daten_train$Umsatz, pred_train)
 
 # Calculating the prediction quality for the training data using the MAPE
-#mape(house_pricing_test$price, pred_test)
+mape(daten_test$Umsatz, pred_test)
 

@@ -1,13 +1,20 @@
 # Installieren der benötigten Pakete
 if (!require(rstudioapi)) {
   install.packages("rstudioapi")
-  library(rstudioapi) 
 }
 
 if (!require(dplyr)) {
   install.packages("dplyr")
-  library(dplyr)
+  
 }
+if (!require(mice)) {
+  install.packages("mice")
+}
+
+library(rstudioapi)
+library(dplyr)
+library (lattice)
+library(mice)
 
 # Arbeitsspeicher leeren
 #remove(list = ls())
@@ -23,7 +30,8 @@ daten_pfad <- file.path(proj_pfad, "data")
 # Angabe aller Namen von Dateien, die verknüpft werden sollen (müssen alle eine Spalte namens "Datum" haben und das Komma als
 # Trennzeichen haben)
 dateinamen <- c("umsatzdaten_gekuerzt.csv", "kiwo.csv", "wetter.csv", "monatsdaten.csv", "jahresdaten.csv", "ferien.csv",
-                "feiertage.csv", "vorherige_umsatzdaten.csv", "zeit_vor_und_nach_feiertagen.csv")
+                "feiertage.csv", "zeit_vor_und_nach_feiertagen.csv", "vorherige_umsatzdaten.csv")
+
 
 
 # Zusammenführung der Daten
@@ -58,6 +66,7 @@ daten$Warengruppe <- factor(daten$Warengruppe, levels = 1:6, labels = c("Brot", 
 # restlichen fehlen)
 daten$KielerWoche[is.na(daten$KielerWoche)] <- 0
 
+
 # Umwandeln des Kieler-Woche-Vektors in einen Faktor
 daten$KielerWoche <- factor(daten$KielerWoche, levels = c(0, 1), labels = c("Keine Kieler Woche", "Kieler Woche"))
 
@@ -69,6 +78,11 @@ daten$Zeit_Im_Monat <- ordered(daten$Zeit_Im_Monat, levels = c("Monatsanfang", "
 
 # Ordnen des Faktors zu den Jahreszeiten
 daten$Jahrzeiten <- ordered(daten$Jahrzeiten, levels = c("Frühling", "Sommer", "Herbst", "Winter"))
+
+# Impute Data für Nan Werte
+#"norm.nob", "norm.predict"
+imp <- mice(daten, method = "norm.nob", m = 1) # Impute data
+daten <- complete(imp) # Store data 
 
 #Speichern daten in csv datei
 #write.csv(daten, file.path(daten_pfad, "aufbereitung.csv"), row.names = FALSE, fileEncoding = "utf-8")
