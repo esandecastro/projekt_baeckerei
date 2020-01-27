@@ -79,6 +79,14 @@ daten$Zeit_Im_Monat <- ordered(daten$Zeit_Im_Monat, levels = c("Monatsanfang", "
 # Ordnen des Faktors zu den Jahreszeiten
 daten$Jahrzeiten <- ordered(daten$Jahrzeiten, levels = c("Frühling", "Sommer", "Herbst", "Winter"))
 
+# Konvertieren zu Faktoren
+daten$Feiertag_in_weniger_als_1_Tagen <- as.factor(daten$Feiertag_in_weniger_als_1_Tagen)
+daten$Feiertag_in_weniger_als_2_Tagen <- as.factor(daten$Feiertag_in_weniger_als_2_Tagen)
+daten$Feiertag_in_weniger_als_3_Tagen <- as.factor(daten$Feiertag_in_weniger_als_3_Tagen)
+daten$Feiertag_vor_weniger_als_1_Tagen <- as.factor(daten$Feiertag_vor_weniger_als_1_Tagen)
+daten$Feiertag_vor_weniger_als_2_Tagen <- as.factor(daten$Feiertag_vor_weniger_als_2_Tagen)
+daten$Feiertag_vor_weniger_als_3_Tagen <- as.factor(daten$Feiertag_vor_weniger_als_3_Tagen)
+
 # Impute Data für Nan Werte
 #"norm.nob", "norm.predict"
 imp <- mice(daten, method = "norm.nob", m = 1) # Impute data

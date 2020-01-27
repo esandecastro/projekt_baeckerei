@@ -1,3 +1,13 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
 # Installieren der benötigten Pakete
 if (!require(rstudioapi)) {
   install.packages("rstudioapi")
@@ -50,7 +60,7 @@ eval(parse("Aufbereitung.R", encoding = "UTF-8"))
 
 # Option to check the correctnes of the code with a small (and computationally fast) training data set
 # Do not run or uncomment the following line if you want to reduce the dataset size
-daten <- sample_frac(daten, .10)
+# daten <- sample_frac(daten, .10)
 
 
 # Bestimmung der Indizes des Traininsdatensatzes
@@ -129,4 +139,7 @@ for (j in 1:length(levels(daten$Warengruppe))) {
   print(mape(daten_train$Umsatz[daten_train$Warengruppe == levels(daten$Warengruppe)[j]], pred_train))
   print(mape(daten_test$Umsatz[daten_test$Warengruppe == levels(daten$Warengruppe)[j]], pred_test))
 }
+
+
+```
 
