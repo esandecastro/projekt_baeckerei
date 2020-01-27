@@ -100,7 +100,7 @@ dummy_list <- c("Ferien", "FerienCAU")
 #house_pricing_dummy = dummy_cols(house_pricing, dummy_list)
 daten_dummy = dummy_cols(daten, dummy_list)
 # Standardisierung von metrischen Variablen
-norm_list <- c("Umsatz", "Temperatur", "Windgeschwindigkeit", "Bewoelkung", "Wettercode")
+norm_list <- c("Umsatz", "Temperatur", "Windgeschwindigkeit", "Bewoelkung", "Wettercode", "Umsatz_letzte_1_Tage", "Umsatz_letzte_3_Tage", "Umsatz_letzte_7_Tage", "Umsatz_letzte_30_Tage")
 
 #Bewoelkung", "Temperatur", "Windgeschwindigkeit", "Umsatz_letze_1__Tage", "Umsatz_letze_2__Tage", "Umsatz_letze_3__Tage", "Umsatz_letze_7__Tage", "Umsatz_letze_30__Tage"
 # Berechnung der Mittelwerte und Standardabweichungen der zu standardisierenden Variablen
@@ -111,8 +111,8 @@ daten_norm <- norm_cols(daten_dummy, norm_values_list)
 ferien_dummies = c('Ferien_0', 'Ferien_1')
 ferienCAU_dummies = c('FerienCAU_0', 'FerienCAU_1')
 # Definition der Features (der unabhängigen Variablen auf deren Basis die Vorhersagen erzeugt werden sollen)
-#"Umsatz_letze_1__Tage_norm", "Umsatz_letze_3__Tage_norm", "Umsatz_letze_7__Tage_norm", "Umsatz_letze_30__Tage_norm"
-features = c('Temperatur_norm', "Windgeschwindigkeit_norm", "Bewoelkung_norm", "Wettercode_norm", ferien_dummies, ferienCAU_dummies)
+#"Umsatz_letze_1__Tage_norm", "Umsatz_letze_3__Tage_norm", "Umsatz_letze_7_Tage_norm", "Umsatz_letze_30__Tage_norm"
+features = c('Temperatur_norm', "Windgeschwindigkeit_norm", "Bewoelkung_norm", "Wettercode_norm", "Umsatz_letzte_1_Tage_norm", "Umsatz_letzte_3_Tage_norm", "Umsatz_letzte_7_Tage_norm", "Umsatz_letzte_30_Tage_norm", ferien_dummies, ferienCAU_dummies)
 # Definition der Label-Variable (der abhaengigen Variable, die vorhergesagt werden soll) sowie
 label = 'Umsatz_norm'
 # Zufallszähler setzen, um die zufällige Partitionierung bei jedem Durchlauf gleich zu halten
@@ -176,15 +176,25 @@ ggplot(data[-1,]) +
 
 ### Laden eines gespeicherten Neuronalen Netzes ###
 ```{python}
-model = keras.models.load_model("neuronal_model.h5")
+model1 = keras.models.load_model("neuronal_model_2.h5")
+#model2 = keras.models.load_model("neuronal_model_2.h5")
+#model3 = keras.models.load_model("neuronal_model_3.h5")
+#model4 = keras.models.load_model("neuronal_model_4.h5")
+
 ```
 
 
 ### Auswertung der Schätzergebnisse ###
 ```{r}
-# Schätzung der (normierten) Preise für die Trainings- und Testdaten
-train_predictions_norm <- py$model$predict(train_dataset)
-test_predictions_norm <- py$model$predict(test_dataset)
+
+models <- list(py$model1)
+
+for (j in 1:length(models)) {
+  model <- models[[j]]
+  
+  # Schätzung der (normierten) Preise für die Trainings- und Testdaten
+train_predictions_norm <- model$predict(train_dataset)
+test_predictions_norm <- model$predict(test_dataset)
 # Rückberechnung der normierten Preisschätzungen zu den tatsächlichen Preisschätzungen bzw. Preisen
 train_predictions <- (train_predictions_norm * norm_values_list$sd[1] ) + norm_values_list$mean[1]
 test_predictions <- (test_predictions_norm * norm_values_list$sd[1]) + norm_values_list$mean[1]
@@ -194,6 +204,8 @@ test_actuals <- daten$Umsatz[-train_ind]
 # Vergleich der Gütekriterien für die Traingings- und Testdaten
 cat(paste0("MAPE on the Training Data:\t", format(mape(train_actuals, train_predictions)*100, digits=3, nsmall=2)))
 cat(paste0("\nMAPE on the Test Data:\t\t", format(mape(test_actuals, test_predictions)*100, digits=3, nsmall=2)))
+}
+
 ```
 
 ```{r}
