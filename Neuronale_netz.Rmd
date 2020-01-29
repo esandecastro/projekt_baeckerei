@@ -204,6 +204,24 @@ test_actuals <- daten$Umsatz[-train_ind]
 # Vergleich der Gütekriterien für die Traingings- und Testdaten
 cat(paste0("MAPE on the Training Data:\t", format(mape(train_actuals, train_predictions)*100, digits=3, nsmall=2)))
 cat(paste0("\nMAPE on the Test Data:\t\t", format(mape(test_actuals, test_predictions)*100, digits=3, nsmall=2)))
+
+for (j in 1:length(levels(daten$Warengruppe))) {
+  print(levels(daten$Warengruppe)[j])
+  
+  
+  train_predictions_norm <- model$predict(train_dataset[daten[train_ind,"Warengruppe"] == levels(daten$Warengruppe)[j], ])
+test_predictions_norm <- model$predict(test_dataset[daten[-train_ind,"Warengruppe"] == levels(daten$Warengruppe)[j], ])
+# Rückberechnung der normierten Preisschätzungen zu den tatsächlichen Preisschätzungen bzw. Preisen
+train_predictions <- (train_predictions_norm * norm_values_list$sd[1] ) + norm_values_list$mean[1]
+test_predictions <- (test_predictions_norm * norm_values_list$sd[1]) + norm_values_list$mean[1]
+# Selektion der zugehörigen tatsächlichen Preise
+train_actuals <- daten$Umsatz[train_ind][which(daten$Warengruppe[train_ind] == levels(daten$Warengruppe)[j])]
+test_actuals <- daten$Umsatz[-train_ind][which(daten$Warengruppe[-train_ind] == levels(daten$Warengruppe)[j])]
+  # Vergleich der Gütekriterien für die Traingings- und Testdaten
+cat(paste0("MAPE on the Training Data:\t", format(mape(train_actuals, train_predictions)*100, digits=3, nsmall=2)))
+cat(paste0("\nMAPE on the Test Data:\t\t", format(mape(test_actuals, test_predictions)*100, digits=3, nsmall=2)))
+  
+}
 }
 
 ```
